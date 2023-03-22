@@ -1,0 +1,8 @@
+name: BetterChat
+version: '${version}'
+main: ca.karmalover.betterchat.BetterChat
+api-version: 1.19
+depend: [ LuckPerms ]
+authors: [ KarmaLover ]
+description: Handles chat
+website: https://karmalover.ca
