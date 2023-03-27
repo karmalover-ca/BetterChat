@@ -82,13 +82,21 @@ public class PlayerEventHandler  implements Listener {
         Component prefix = constructPrefixComponent(source);
         Component suffix = constructSuffixComponent(source);
 
+
+        if(!sourceDisplayName.hasStyling()) {
+            String displayNamePlain = PlainTextComponentSerializer.plainText().serialize(sourceDisplayName);
+
+            sourceDisplayName = EnhancedLegacyText.get().parse(displayNamePlain);
+        }
+
         if(!message.hasStyling()) {
             String messagePlain = PlainTextComponentSerializer.plainText().serialize(message);
 
             message = EnhancedLegacyText.get().parse(messagePlain);
         }
 
-        Component component = Component.join(JoinConfiguration.separator(CHAT_SEPARATOR), prefix.append(sourceDisplayName).append(suffix), message);
+        //Component component = Component.join(JoinConfiguration.separator(CHAT_SEPARATOR), prefix.append(sourceDisplayName).append(suffix), message);
+        Component component = Component.text().append(prefix, sourceDisplayName, suffix, CHAT_SEPARATOR, message).build();
 
         viewer.sendMessage(component);
     }
