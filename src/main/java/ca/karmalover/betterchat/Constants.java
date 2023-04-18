@@ -1,8 +1,10 @@
 package ca.karmalover.betterchat;
 
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public class Constants {
 
-    public static final String SUCCESS = ChatColor.translateAlternateColorCodes('&', "&8[&bBC&8] &7&l-&f ");
+    //todo fix this
+    public static final Component MESSAGE_PREFIX = Component.text().append(Component.text("BetterChat ", NamedTextColor.AQUA), Component.text(">> ", NamedTextColor.DARK_GRAY)).build();
 }

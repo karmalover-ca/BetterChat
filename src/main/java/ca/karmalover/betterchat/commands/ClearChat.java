@@ -35,7 +35,7 @@ public class ClearChat extends BaseCommand {
             if(!player1.hasPermission("betterchat.clearchat.bypass")) {
                 player1.sendMessage(Component.text(StringUtils.repeat(" \n", 100)));
             }
-            player1.sendMessage(Component.text(Constants.SUCCESS + "Chat cleared by " + player.getName()));
+            player1.sendMessage(Component.text(Constants.MESSAGE_PREFIX + "Chat cleared by " + player.getName()));
         }
     }
 
@@ -46,7 +46,7 @@ public class ClearChat extends BaseCommand {
         Collection<? extends Player> onlinePlayers = core.getServer().getOnlinePlayers();
         for(Player player1 : onlinePlayers) {
             player1.sendMessage(Component.text(StringUtils.repeat(" \n", 100)));
-            player1.sendMessage(Component.text(Constants.SUCCESS + "Chat cleared by " + player.getName()));
+            player1.sendMessage(Component.text(Constants.MESSAGE_PREFIX + "Chat cleared by " + player.getName()));
         }
     }
 }

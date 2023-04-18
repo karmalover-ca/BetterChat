@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.logging.Level;
 
 public class PlayerEventHandler  implements Listener {
     private static final TextComponent CHAT_SEPARATOR = Component.text(" >> ", NamedTextColor.DARK_GRAY);
@@ -83,15 +84,13 @@ public class PlayerEventHandler  implements Listener {
         Component suffix = constructSuffixComponent(source);
 
 
+        String displayNamePlain = PlainTextComponentSerializer.plainText().serialize(sourceDisplayName);
         if(!sourceDisplayName.hasStyling()) {
-            String displayNamePlain = PlainTextComponentSerializer.plainText().serialize(sourceDisplayName);
-
             sourceDisplayName = EnhancedLegacyText.get().parse(displayNamePlain);
         }
 
+        String messagePlain = PlainTextComponentSerializer.plainText().serialize(message);
         if(!message.hasStyling()) {
-            String messagePlain = PlainTextComponentSerializer.plainText().serialize(message);
-
             message = EnhancedLegacyText.get().parse(messagePlain);
         }
 
@@ -99,5 +98,7 @@ public class PlayerEventHandler  implements Listener {
         Component component = Component.text().append(prefix, sourceDisplayName, suffix, CHAT_SEPARATOR, message).build();
 
         viewer.sendMessage(component);
+
+        core.getLogger().log(Level.INFO, displayNamePlain + " >> " + messagePlain);
     }
 }
