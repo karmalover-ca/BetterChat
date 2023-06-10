@@ -85,9 +85,6 @@ public class PlayerEventHandler  implements Listener {
 
 
         String displayNamePlain = PlainTextComponentSerializer.plainText().serialize(sourceDisplayName);
-        if(!sourceDisplayName.hasStyling()) {
-            sourceDisplayName = EnhancedLegacyText.get().parse(displayNamePlain);
-        }
 
         String messagePlain = PlainTextComponentSerializer.plainText().serialize(message);
         if(!message.hasStyling()) {

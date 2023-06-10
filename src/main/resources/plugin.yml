@@ -6,3 +6,4 @@ depend: [ LuckPerms ]
 authors: [ KarmaLover ]
 description: Handles chat
 website: https://karmalover.ca
+load: POSTWORLD
