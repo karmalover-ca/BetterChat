@@ -5,26 +5,32 @@ import dev.vankka.enhancedlegacytext.EnhancedLegacyText;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.JoinConfiguration;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.luckperms.api.LuckPerms;
+import net.luckperms.api.model.group.Group;
 import net.luckperms.api.model.user.User;
 import net.luckperms.api.node.NodeType;
+import net.luckperms.api.node.types.MetaNode;
 import net.luckperms.api.node.types.PrefixNode;
 import net.luckperms.api.node.types.SuffixNode;
 import net.luckperms.api.query.QueryOptions;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.logging.Level;
+import java.util.stream.Stream;
 
 public class PlayerEventHandler  implements Listener {
     private static final TextComponent CHAT_SEPARATOR = Component.text(" >> ", NamedTextColor.DARK_GRAY);
@@ -43,6 +49,8 @@ public class PlayerEventHandler  implements Listener {
 
         Player player = event.getPlayer();
         if(!player.isOnline()) return;
+
+        ItemStack is = new ItemStack(Material.ACACIA_PLANKS, 1);
 
         event.setCancelled(true);
 
@@ -79,9 +87,30 @@ public class PlayerEventHandler  implements Listener {
         return EnhancedLegacyText.get().parse(suffix);
     }
 
+    private Component constructNameComponent(Player player) {
+        LuckPerms luckPerms = core.luckPerms;
+        User user = luckPerms.getPlayerAdapter(Player.class).getUser(player);
+
+        Optional<MetaNode> optional = user.getNodes(NodeType.INHERITANCE).stream()
+                .map(inheritanceNode -> luckPerms.getGroupManager().getGroup(inheritanceNode.getGroupName()))
+                .flatMap((Function<Group, Stream<MetaNode>>) group -> {
+                    if (group == null) return Stream.empty();
+                    return group.getNodes(NodeType.META).stream();
+                })
+                .filter(node -> node.getMetaKey().equals("namecolor"))
+                .findAny();
+
+        if (optional.isEmpty()) return Component.text(player.getName());
+
+        String nameColorNode = optional.get().getMetaValue();
+
+        return EnhancedLegacyText.get().buildComponent(nameColorNode + player.getName()).build();
+    }
+
     private void sendChatMessageBecauseFUCKMICROSOFT(@NotNull Player source, @NotNull Component sourceDisplayName, @NotNull Component message, @NotNull Audience viewer) {
         Component prefix = constructPrefixComponent(source);
         Component suffix = constructSuffixComponent(source);
+        Component displayName = constructNameComponent(source);
 
 
         String displayNamePlain = PlainTextComponentSerializer.plainText().serialize(sourceDisplayName);
@@ -92,7 +121,7 @@ public class PlayerEventHandler  implements Listener {
         }
 
         //Component component = Component.join(JoinConfiguration.separator(CHAT_SEPARATOR), prefix.append(sourceDisplayName).append(suffix), message);
-        Component component = Component.text().append(prefix, sourceDisplayName, suffix, CHAT_SEPARATOR, message).build();
+        Component component = Component.text().append(prefix, displayName, suffix, CHAT_SEPARATOR, message).build();
 
         viewer.sendMessage(component);
 
