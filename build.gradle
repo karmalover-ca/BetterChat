@@ -53,3 +53,13 @@ processResources {
         expand props
     }
 }
+
+shadowJar{
+    mergeServiceFiles('META-INF/spring.*')
+    exclude "META-INF/*.SF"
+    exclude "META-INF/*.DSA"
+    exclude "META-INF/*.RSA"
+    exclude "META-INF/LICENSE"
+    // yes this the variables in this are deprecated but i dont really care
+    archiveFileName = "${baseName}-${version}.${extension}"
+}
