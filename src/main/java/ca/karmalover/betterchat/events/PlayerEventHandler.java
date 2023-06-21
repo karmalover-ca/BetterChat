@@ -87,30 +87,9 @@ public class PlayerEventHandler  implements Listener {
         return EnhancedLegacyText.get().parse(suffix);
     }
 
-    private Component constructNameComponent(Player player) {
-        LuckPerms luckPerms = core.luckPerms;
-        User user = luckPerms.getPlayerAdapter(Player.class).getUser(player);
-
-        Optional<MetaNode> optional = user.getNodes(NodeType.INHERITANCE).stream()
-                .map(inheritanceNode -> luckPerms.getGroupManager().getGroup(inheritanceNode.getGroupName()))
-                .flatMap((Function<Group, Stream<MetaNode>>) group -> {
-                    if (group == null) return Stream.empty();
-                    return group.getNodes(NodeType.META).stream();
-                })
-                .filter(node -> node.getMetaKey().equals("namecolor"))
-                .findAny();
-
-        if (optional.isEmpty()) return Component.text(player.getName());
-
-        String nameColorNode = optional.get().getMetaValue();
-
-        return EnhancedLegacyText.get().buildComponent(nameColorNode + player.getName()).build();
-    }
-
     private void sendChatMessageBecauseFUCKMICROSOFT(@NotNull Player source, @NotNull Component sourceDisplayName, @NotNull Component message, @NotNull Audience viewer) {
         Component prefix = constructPrefixComponent(source);
         Component suffix = constructSuffixComponent(source);
-        Component displayName = constructNameComponent(source);
 
 
         String displayNamePlain = PlainTextComponentSerializer.plainText().serialize(sourceDisplayName);
@@ -121,7 +100,7 @@ public class PlayerEventHandler  implements Listener {
         }
 
         //Component component = Component.join(JoinConfiguration.separator(CHAT_SEPARATOR), prefix.append(sourceDisplayName).append(suffix), message);
-        Component component = Component.text().append(prefix, displayName, suffix, CHAT_SEPARATOR, message).build();
+        Component component = Component.text().append(prefix, sourceDisplayName, suffix, CHAT_SEPARATOR, message).build();
 
         viewer.sendMessage(component);
 
